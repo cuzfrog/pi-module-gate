@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { parseJsonc } from "./utils/jsonc.ts";
+import { parseJsonc } from "./utils/index.ts";
 
 export type ModuleGateConfig = {
   moduleDescriptorFileName: string;

@@ -200,7 +200,7 @@ no-new-exports: [mod.rs]
 |------|--------|------|
 | `moduleDescriptorFileName` | `MODULE.md` | 用于模块描述符的文件名（不区分大小写） |
 | `moduleDescriptorReadonly` | `"off"` | `"file"` 使整个描述符只读；`"frontmatter"` 仅锁定 YAML frontmatter（主体说明文字仍可编辑）；`"off"` 禁用描述符只读。`true`/`false` 也接受以保持向后兼容。 |
-| `sourceRoots` | `["src/"]` | 扫描描述符文件和强制执行门控的目录。传递字符串表示单个根目录，或数组表示多个根目录（例如使用 `["packages/app/src/", "packages/lib/src/"]` 的多仓库项目）。使用 `[""]` 从项目根目录扫描。遗留的单数 `sourceRoot`（字符串）仍然接受。 |
+| `sourceRoots` | `["src/"]` | 强制执行门控的目录。描述符文件的发现与该设置无关，始终覆盖整个项目。传递字符串表示单个根目录，或数组表示多个根目录（例如使用 `["packages/app/src/", "packages/lib/src/"]` 的多仓库项目）。使用 `[""]` 从项目根目录强制执行。遗留的单数 `sourceRoot`（字符串）仍然接受。 |
 | `disableModuleInterfaceImportGate` | `false` | 为 `true` 时，导入不会被强制为模块接口。 |
 | `disableSystemPrompt` | `false` | 为 `true` 时，跳过将模块门控提示注入代理的系统提示。 |
 | `outputModuleProseOnBlock` | `false` | 为 `true` 时，违规模块描述符的说明文字会附加到阻止消息中，使代理看到契约上下文。默认禁用以保持错误消息简洁。 |

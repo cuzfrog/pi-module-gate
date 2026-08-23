@@ -200,7 +200,7 @@ no-new-exports: [mod.rs]
 |-----------|-----------|------|
 | `moduleDescriptorFileName` | `MODULE.md` | モジュール記述子のファイル名（大文字小文字を無視） |
 | `moduleDescriptorReadonly` | `"off"` | `"file"` は記述子全体を読み取り専用にし、`"frontmatter"` は YAML frontmatter のみをロック（ボディの説明文は編集可能）、`"off"` は記述子の読み取り専用を無効にする。`true`/`false` も後方互換性のために受け入れられる。 |
-| `sourceRoots` | `["src/"]` | 記述子ファイルをスキャンし、ゲートを強制するディレクトリ。単一のルートには文字列を、配列には複数のルート（例：マルチリポジトリで `["packages/app/src/", "packages/lib/src/"]`）を指定できる。`[""]` でプロジェクトルートからスキャンする。レガシーの単数形 `sourceRoot`（文字列）は引き続きサポートされる。 |
+| `sourceRoots` | `["src/"]` | ゲートを強制するディレクトリ。記述子ファイルはこの設定に関係なくプロジェクト全体から検出される。単一のルートには文字列を、配列には複数のルート（例：マルチリポジトリで `["packages/app/src/", "packages/lib/src/"]`）を指定できる。 `[""]` でプロジェクトルートから強制する。レガシーの単数形 `sourceRoot`（文字列）は引き続きサポートされる。 |
 | `disableModuleInterfaceImportGate` | `false` | `true` の場合、インポートはモジュールインターフェースから強制されない。 |
 | `disableSystemPrompt` | `false` | `true` の場合、エージェントのシステムプロンプトへのモジュールゲートヒントの注入をスキップする。 |
 | `outputModuleProseOnBlock` | `false` | `true` の場合、違反モジュール記述子の説明文がブロックメッセージに追加され、エージェントが契約のコンテキストを確認できるにする。デフォルトでは無効で、エラーメッセージを簡潔に保つ。 |

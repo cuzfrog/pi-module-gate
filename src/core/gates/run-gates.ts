@@ -1,5 +1,5 @@
 import * as path from "node:path";
-import { parseFrontmatter } from "../utils/frontmatter.ts";
+import { parseFrontmatter } from "../utils/index.ts";
 import type { ModuleIndex } from "../types.ts";
 import type { ModuleGateConfig } from "../config.ts";
 import { readFileSafe, applyEdits, isWithinSourceRoot, findOwningModule } from "../utils.ts";

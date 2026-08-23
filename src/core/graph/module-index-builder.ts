@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { readdir } from "node:fs/promises";
-import { parseFrontmatter } from "../utils/frontmatter.ts";
+import { parseFrontmatter } from "../utils/index.ts";
 import type { Diagnostic, ModuleContract, ModuleFrontmatter, ModuleIndex } from "../types.ts";
 import type { ModuleGateConfig } from "../config.ts";
 import type { Dirent } from "node:fs";
@@ -15,20 +15,13 @@ export async function buildModuleIndex(
   cwd: string,
   config: ModuleGateConfig,
 ): Promise<ModuleIndexBuildResult> {
-  const scanRoots = resolveScanRoots(cwd, config.sourceRoots);
+  const scanRoot = path.resolve(cwd);
 
-  const moduleFilesList = await Promise.all(
-    scanRoots.map((root) => findModuleFiles(root, config.moduleDescriptorFileName)),
-  );
-  const { contracts, diagnostics } = buildContracts(moduleFilesList.flat());
+  const moduleFiles = await findModuleFiles(scanRoot, config.moduleDescriptorFileName);
+  const { contracts, diagnostics } = buildContracts(moduleFiles);
   const dirToModule = await buildDirToModuleMap(contracts);
 
   return { index: { contracts, dirToModule }, diagnostics };
-}
-
-function resolveScanRoots(cwd: string, sourceRoots: string[]): string[] {
-  if (sourceRoots.length === 0) return [path.resolve(cwd)];
-  return sourceRoots.map((r) => path.resolve(cwd, r));
 }
 
 function buildContracts(

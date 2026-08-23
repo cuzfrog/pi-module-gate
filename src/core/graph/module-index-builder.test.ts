@@ -9,13 +9,13 @@ vi.mock("node:fs", () => ({
   readFileSync: vi.fn(),
 }));
 
-vi.mock("../utils/frontmatter.ts", () => ({
+vi.mock("../utils/index.ts", () => ({
   parseFrontmatter: vi.fn(),
 }));
 
 import { readdir } from "node:fs/promises";
 import * as fs from "node:fs";
-import { parseFrontmatter } from "../utils/frontmatter.ts";
+import { parseFrontmatter } from "../utils/index.ts";
 import { buildModuleIndex } from "./module-index-builder.ts";
 import type { ModuleGateConfig } from "../config.ts";
 
@@ -281,17 +281,18 @@ describe("buildModuleIndex", () => {
     expect(index.contracts[0].modulePath).toBe("/project");
   });
 
-  it("scans only within sourceRoots", async () => {
+  it("scans the whole project regardless of sourceRoots", async () => {
     mockedReaddir.mockImplementation(async (dir: unknown) => {
       const d = dir as string;
-      if (d === "/project/src") return [makeDirent("module.md", false)] as Dirent[];
+      if (d === "/project") return [makeDirent("lib", true)] as Dirent[];
+      if (d === "/project/lib") return [makeDirent("module.md", false)] as Dirent[];
       return [] as Dirent[];
     });
 
     mockedReadFileSync.mockReturnValue("content");
     mockedParseFrontmatter.mockReturnValue({
       frontmatter: {},
-      body: "Src module.",
+      body: "Lib module.",
     });
 
     const config: ModuleGateConfig = {
@@ -305,14 +306,23 @@ describe("buildModuleIndex", () => {
     const { index } = await buildModuleIndex("/project", config);
 
     expect(index.contracts).toHaveLength(1);
-    expect(index.contracts[0].modulePath).toBe("/project/src");
+    expect(index.contracts[0].modulePath).toBe("/project/lib");
   });
 
-  it("scans multiple sourceRoots and merges contracts", async () => {
+  it("skips node_modules and .git when scanning from the project root", async () => {
     mockedReaddir.mockImplementation(async (dir: unknown) => {
       const d = dir as string;
-      if (d === "/project/src") return [makeDirent("module.md", false)] as Dirent[];
+      if (d === "/project") {
+        return [
+          makeDirent("lib", true),
+          makeDirent("node_modules", true),
+          makeDirent(".git", true),
+        ] as Dirent[];
+      }
       if (d === "/project/lib") return [makeDirent("module.md", false)] as Dirent[];
+      if (d === "/project/node_modules") return [makeDirent("dep", true)] as Dirent[];
+      if (d === "/project/node_modules/dep") return [makeDirent("module.md", false)] as Dirent[];
+      if (d === "/project/.git") return [makeDirent("module.md", false)] as Dirent[];
       return [] as Dirent[];
     });
 
@@ -322,18 +332,9 @@ describe("buildModuleIndex", () => {
       body: "Module.",
     });
 
-    const config: ModuleGateConfig = {
-      moduleDescriptorFileName: "module.md",
-      moduleDescriptorReadonly: "file",
-      sourceRoots: ["src/", "lib/"],
-      disableModuleInterfaceImportGate: false,
-      disableSystemPrompt: false,
-      outputModuleProseOnBlock: false,
-    };
-    const { index } = await buildModuleIndex("/project", config);
+    const { index } = await buildModuleIndex("/project", defaultConfig);
 
-    expect(index.contracts).toHaveLength(2);
-    const paths = index.contracts.map((c) => c.modulePath).sort();
-    expect(paths).toEqual(["/project/lib", "/project/src"]);
+    expect(index.contracts).toHaveLength(1);
+    expect(index.contracts[0].modulePath).toBe("/project/lib");
   });
 });
