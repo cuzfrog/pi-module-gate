@@ -129,4 +129,23 @@ describe("pre-tool-use hook", () => {
     expect(parsed.decision).toBe("reject");
     expect(parsed.reason).toContain("Readonly rule");
   });
+
+  it("rejects import bypassing the interface of a module outside sourceRoots", () => {
+    const r = runHook(
+      {
+        hook_event_name: "PreToolUse",
+        tool_name: "write",
+        tool_input: {
+          file_path: "src/app.ts",
+          content: `import { fun1 } from "../other/fun1";\n\nexport function greet() { return 1; }\n`,
+        },
+      },
+      FIXTURES,
+    );
+    expect(r.status).toBe(0);
+    const parsed = JSON.parse(r.stdout);
+    expect(parsed.decision).toBe("reject");
+    expect(parsed.reason).toContain("fun1.ts");
+    expect(parsed.reason).toContain("other/");
+  });
 });

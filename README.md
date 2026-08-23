@@ -200,7 +200,7 @@ The canonical agent-independent location is `.module-gates/config.json` (the who
 |--------|---------|-------------|
 | `moduleDescriptorFileName` | `MODULE.md` | File name used for module descriptors (case-insensitive) |
 | `moduleDescriptorReadonly` | `"off"` | `"file"` makes the whole descriptor readonly; `"frontmatter"` locks only the YAML frontmatter (body prose stays editable); `"off"` disables descriptor readonly. `true`/`false` are also accepted for backward compatibility. |
-| `sourceRoots` | `["src/"]` | Directories to scan for descriptor files and enforce gates. Pass a single string for one root, or an array for multiple roots (e.g. monorepos with `["packages/app/src/", "packages/lib/src/"]`). Use `[""]` to scan from the project root. Legacy singular `sourceRoot` (string) is still accepted. |
+| `sourceRoots` | `["src/"]` | Directories where gates are enforced. Descriptor files are discovered across the whole project regardless of this setting. Pass a single string for one root, or an array for multiple roots (e.g. monorepos with `["packages/app/src/", "packages/lib/src/"]`). Use `[""]` to enforce from the project root. Legacy singular `sourceRoot` (string) is still accepted. |
 | `disableModuleInterfaceImportGate` | `false` | When `true`, imports will not be forced to be from module interface. |
 | `disableSystemPrompt` | `false` | When `true`, skip injecting the module-gates hint into the agent's system prompt. |
 | `outputModuleProseOnBlock` | `false` | When `true`, the violating module descriptor's prose is appended to the block message so the agent sees the contract context. Disabled by default to keep the error message concise. |

@@ -96,4 +96,19 @@ describe("pre-tool-use hook", () => {
     const r = runHook({ hook_event_name: "SessionStart", tool_name: "Read", tool_input: {} });
     expect(r.status).toBe(0);
   });
+
+  it("exits 2 for import bypassing the interface of a module outside sourceRoots", () => {
+    const r = runHook({
+      hook_event_name: "PreToolUse",
+      tool_name: "Write",
+      tool_input: {
+        file_path: "src/app.ts",
+        content: `import { fun1 } from "../other/fun1";\n\nexport function greet() { return 1; }\n`,
+      },
+      cwd: FIXTURES,
+    });
+    expect(r.status).toBe(2);
+    expect(r.stderr).toContain("fun1.ts");
+    expect(r.stderr).toContain("other/");
+  });
 });
